@@ -107,17 +107,15 @@
 <script>
     $(function () {
         //Filtro periodo
-        $('#pesquisa').daterangepicker();
-
-        $('#pesquisa').on('apply.daterangepicker', function(ev, picker) {
+         $('#pesquisa').daterangepicker().on('apply.daterangepicker', function(ev, picker) {
 
             $.ajax({
-                method: "GET",
+                method: "POST",
                 url: "model/servicos.php",
-                data: {dataIn:'1'},
+                data: {"dataIn":"1"},                
                 success: function(data) {
-                    alert(data);
-                    window.open("model/servicos.php");
+                    console.log(data);
+                    //window.open("model/servicos.php");
                 }
             });
         });
