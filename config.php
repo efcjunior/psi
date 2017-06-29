@@ -1,6 +1,6 @@
 <?php
 /** DSN  banco de dados Postgresql*/
-define('DB_DSN', 'pgsql:host=localhost;port=5432;dbname=des;user=postgres;password=postgres');
+define('DB_DSN', 'host=localhost port=5432 dbname=des user=postgres password=postgres');
 /** caminho absoluto para a pasta do sistema **/
 if ( !defined('ABSPATH') )
     define('ABSPATH', dirname(__FILE__) . '/');

@@ -53,17 +53,20 @@
     </header>
 
     <!-- Content Wrapper. Contains page content -->
-    <div id="principal" class="content-wrapper">
-        <?php
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="row">
+                <div id="totOcorrenciaGrupoDataChart" class="col-md-6">
 
-        $db = open_database();
-
-        if ($db) {
-            echo '<h1>Banco de Dados Conectado!</h1>';
-        } else {
-            echo '<h1>ERRO: Não foi possível Conectar!</h1>';
-        }
-        ?>
+                </div>
+                <div class="col-md-6">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                </div>
+            </div>
+        </section>
     </div>
 
     <!-- Main Footer -->
@@ -96,6 +99,8 @@
 <script src="resources/adminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 <!-- iCheck 1.0.1 -->
 <script src="resources/adminLTE/plugins/iCheck/icheck.min.js"></script>
+<!-- ChartJS 1.0.1 -->
+<script src="resources/adminLTE/plugins/chartjs/Chart.min.js"></script>
 <!-- FastClick -->
 <script src="resources/adminLTE/plugins/fastclick/fastclick.js"></script>
 <!-- AdminLTE App -->
@@ -103,11 +108,15 @@
 <!-- AdminLTE for demo purposes -->
 <script src="resources/adminLTE/js/demo.js"></script>
 
+<!-- VIEWS-->
+<script src="view/totOcorrenciaGrupoDataChart.js"></script>
+
 <!-- Page script -->
 <script>
     $(function () {
         //Filtro periodo
-        $('#pesquisa').daterangepicker().on('apply.daterangepicker', function(ev, picker) {
+        $('#pesquisa').daterangepicker().on('apply.daterangepicker', function (ev, picker) {
+            ev.preventDefault();
 
             var dataJson = {
                 nome: 'bbbbb'
@@ -116,39 +125,26 @@
             var jsontosend = JSON.stringify(dataJson);
 
             $.ajax({
-                method: 'POST',
+                url: "dashboard/functions.php",
+                method: 'post',
                 contentType: 'application/json',
-                url: "model/servicos.php",
                 data: jsontosend,
-                success: function(data) {
-                    window.open("model/servicos.php");
+                success: function (data) {
+                    $('#totOcorrenciaGrupoDataChart').load('view/totOcorrenciaGrupoDataChart.php',function () {
+                        loadChart();
+                    });
+
+                    console.log(data);
                 }
             });
         });
 
-        $('#datepicker').datepicker({
-            autoclose: true
-        });
+        loadDashboard();
+
+
     });
 
-    function teste () {
-        var dataJson = {
-            nome: 'bbbbb'
-        };
 
-        var jsontosend = JSON.stringify(dataJson);
-
-        $.ajax({
-            method: 'POST',
-            contentType: 'application/json',
-            url: "model/servicos.php",
-            cache: false,
-            data: "{'data':'" + dataJson+ "'}",
-            success: function(data) {
-                window.open("model/servicos.php");
-            }
-        });
-    }
 </script>
 
 
