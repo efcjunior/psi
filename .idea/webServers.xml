@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="7ed37e9a-dea2-4f59-b762-c337145bd38e" name="apache2" url="http://localhost:8090/ouvidoria">
+        <fileTransfer port="0" mountedRoot="/var/www/html/ouvidoria" accessType="MOUNT" />
+      </webServer>
+    </option>
+  </component>
+</project>

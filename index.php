@@ -107,16 +107,20 @@
 <script>
     $(function () {
         //Filtro periodo
-        $('#pesquisa').daterangepicker();
+        $('#pesquisa').daterangepicker().on('apply.daterangepicker', function(ev, picker) {
 
-        $('#pesquisa').on('apply.daterangepicker', function(ev, picker) {
+            var dataJson = {
+                nome: 'bbbbb'
+            };
+
+            var jsontosend = JSON.stringify(dataJson);
 
             $.ajax({
-                method: "GET",
+                method: 'POST',
+                contentType: 'application/json',
                 url: "model/servicos.php",
-                data: {dataIn:'1'},
+                data: jsontosend,
                 success: function(data) {
-                    alert(data);
                     window.open("model/servicos.php");
                 }
             });
@@ -126,6 +130,25 @@
             autoclose: true
         });
     });
+
+    function teste () {
+        var dataJson = {
+            nome: 'bbbbb'
+        };
+
+        var jsontosend = JSON.stringify(dataJson);
+
+        $.ajax({
+            method: 'POST',
+            contentType: 'application/json',
+            url: "model/servicos.php",
+            cache: false,
+            data: "{'data':'" + dataJson+ "'}",
+            success: function(data) {
+                window.open("model/servicos.php");
+            }
+        });
+    }
 </script>
 
 

@@ -1,12 +1,15 @@
 <?php
 
-echo json_encode($_GET);
-echo $_GET['dataIn'];
+echo
+$data = file_get_contents('php://input');
 
-if (isset($_GET['dataIn'])){
-    echo '<h1>ok</h1>';
-}else{
-    echo '<h1>eror</h1>';
-}
+echo "blalladfas";
 
-?>
+echo $_POST['data'];
+
+print_r($data);
+$data = json_decode($data, true);
+print_r($data);
+
+
+
