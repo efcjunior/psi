@@ -116,34 +116,13 @@
     $(function () {
         //Filtro periodo
         $('#pesquisa').daterangepicker().on('apply.daterangepicker', function (ev, picker) {
-            ev.preventDefault();
 
-            var dataJson = {
-                nome: 'bbbbb'
-            };
-
-            var jsontosend = JSON.stringify(dataJson);
-
-            $.ajax({
-                url: "dashboard/functions.php",
-                method: 'post',
-                contentType: 'application/json',
-                data: jsontosend,
-                success: function (data) {
-                    $('#totOcorrenciaGrupoDataChart').load('view/totOcorrenciaGrupoDataChart.php',function () {
-                        loadChart();
-                    });
-
-                    console.log(data);
-                }
+            $('#totOcorrenciaGrupoDataChart').load('view/totOcorrenciaGrupoDataChart.php', function () {
+                loadChart();
             });
+
         });
-
-        loadDashboard();
-
-
     });
-
 
 </script>
 

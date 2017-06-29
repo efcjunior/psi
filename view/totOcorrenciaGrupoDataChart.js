@@ -16,6 +16,25 @@ function loadDashboard() {
 
 }
 
+function getRandomColor() {
+    var color = '';
+    while (!color.match(/(#[c-e].)([e-f][a-f])([9-c].)/)) {
+        color = '#' + Math.floor(Math.random() * (Math.pow(16,6))).toString(16);
+    }
+    return color;
+}
+
+function getColorSimilarityIndex(c1, c2) {
+    var index = 0;
+    for (i = 1; i <= 6; i++) {
+        if (i == 1 || i == 5) {
+            if (c1.substring(i, i + 1) === c2.substring(i, i + 1)) {
+                index++;
+            }
+        }
+    }
+    return index;
+}
 
 function loadChart(){
     /* ChartJS
@@ -32,51 +51,44 @@ function loadChart(){
     // This will get the first returned node in the jQuery collection.
     var areaChart = new Chart(areaChartCanvas);
 
+    x = getRandomColor();
+    y = getRandomColor();
+    z = getRandomColor();
+
     var areaChartData = {
         labels: ["January", "February", "March", "April", "May", "June", "July"],
         datasets: [
             {
-                label: "Electronics",
-                fillColor: "rgba(210, 214, 222, 1)",
-                strokeColor: "rgba(210, 214, 222, 1)",
-                pointColor: "rgba(210, 214, 222, 1)",
-                pointStrokeColor: "#c1c7d1",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(220,220,220,1)",
-                data: [65, 59, 80, 81, 56, 55, 40]
+                label: "Digital Goods",
+                fillColor: x,
+                strokeColor: x,
+                pointColor: x,
+                pointStrokeColor: x,
+                pointHighlightFill: x,
+                pointHighlightStroke: x,
+                data: [50, 300, 40, 19, 86, 27, 90]
             },
             {
-                label: "Digital Goods",
-                fillColor: "rgba(60,141,188,0.9)",
-                strokeColor: "rgba(60,141,188,0.8)",
-                pointColor: "#3b8bba",
-                pointStrokeColor: "rgba(60,141,188,1)",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(60,141,188,1)",
-                data: [28, 48, 40, 19, 86, 27, 90]
-            },
-            {
-                label: "Digital Goods",
-                fillColor: "rgba(60,141,188,0.9)",
-                strokeColor: "rgba(60,141,188,0.8)",
-                pointColor: "#3b8bba",
-                pointStrokeColor: "rgba(60,141,188,1)",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(60,141,188,1)",
-                data: [100, 300, 40, 19, 86, 27, 90]
-            },
-            {
-                label: "Digital Goods",
-                fillColor: "rgba(60,141,188,0.9)",
-                strokeColor: "rgba(60,141,188,0.8)",
-                pointColor: "#3b8bba",
-                pointStrokeColor: "rgba(60,141,188,1)",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(60,141,188,1)",
-                data: [28, 500, 40, 19, 86, 27, 90]
+                label: "xxx Goods",
+                fillColor: y,
+                strokeColor: y,
+                pointColor: y,
+                pointStrokeColor: y,
+                pointHighlightFill: y,
+                pointHighlightStroke: y,
+                data: [100, 9, 500, 10, 86, 27, 300]
             }
-
-
+            ,
+            {
+                label: "xxx dfasfdsa",
+                fillColor: z,
+                strokeColor: z,
+                pointColor: z,
+                pointStrokeColor: z,
+                pointHighlightFill: z,
+                pointHighlightStroke: z,
+                data: [150, 9, 60, 90, 70, 27, 300]
+            }
         ]
     };
 
