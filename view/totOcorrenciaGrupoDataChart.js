@@ -1,19 +1,128 @@
-function loadDashboard() {
+$.extend({
+    loadLabelData: function() {
 
-    var objData ={
-        "action": "index"
+        var objData ={
+            "action": "labelData",
+            "mesano": "true"
+        };
+
+        var resposta = [];
+
+        $.ajax({
+            url: "dashboard/functions.php",
+            method: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(objData),
+            async: false,
+            success: function (response) {
+                jQuery.each(response, function( key, value ) {
+                    resposta.push(value.anomes);
+                });
+            }
+        });
+        return resposta;
     }
+});
 
-    $.ajax({
-        url: "dashboard/functions.php",
-        method: 'post',
-        contentType: 'application/json',
-        data: JSON.stringify(objData),
-        success: function (data) {
-            console.log(data);
-        }
+$.extend({
+    loadGrupoMesAno: function() {
+
+        var objData ={
+            "action": "grupoMesAno",
+        };
+
+        var resposta = null;
+
+        $.ajax({
+            url: "dashboard/functions.php",
+            method: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(objData),
+            async: false,
+            success: function (response) {
+                resposta = response;
+            }
+        });
+        return resposta;
+    }
+});
+
+function loadDashboard() {
+    data = $.loadGrupoMesAno()
+    labels = $.loadLabelData();
+    chartData = new ChartData(labels);
+
+
+    jQuery.each(data, function( key, value ) {
+        var chartDataSet = new ChartDataSet();
+        chartDataSet.label = value.grupo;
+        chartDataSet.data.push(value.total);
+
+        chartData.addChartDataSet(chartDataSet);
     });
 
+    loadChart(chartData);
+}
+
+function loadChart(chartData){
+
+    console.log(chartData);
+
+    var ctx = $("#barChart");
+
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data:chartData,
+        options: {
+            // events: ['click']
+            onClick:graphClickEvent
+        }
+
+    });
+
+
+//     console.log(areaChartData.datasets);
+//
+//     //-------------
+//     //- BAR CHART -
+//     //-------------
+//     var barChartCanvas = $("#barChart").get(0).getContext("2d");
+//     var barChart = new Chart(barChartCanvas);
+//     var barChartData = areaChartData;
+//     barChartData.datasets[1].fillColor = "#00a65a";
+//     barChartData.datasets[1].strokeColor = "#00a65a";
+//     barChartData.datasets[1].pointColor = "#00a65a";
+//     var barChartOptions = {
+//         //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+//         scaleBeginAtZero: true,
+//         //Boolean - Whether grid lines are shown across the chart
+//         scaleShowGridLines: true,
+//         //String - Colour of the grid lines
+//         scaleGridLineColor: "rgba(0,0,0,.05)",
+//         //Number - Width of the grid lines
+//         scaleGridLineWidth: 1,
+//         //Boolean - Whether to show horizontal lines (except X axis)
+//         scaleShowHorizontalLines: true,
+//         //Boolean - Whether to show vertical lines (except Y axis)
+//         scaleShowVerticalLines: true,
+//         //Boolean - If there is a stroke on each bar
+//         barShowStroke: true,
+//         //Number - Pixel width of the bar stroke
+//         barStrokeWidth: 2,
+//         //Number - Spacing between each of the X value sets
+//         barValueSpacing: 5,
+//         //Number - Spacing between data sets within X values
+//         barDatasetSpacing: 1,
+//         //String - A legend template
+//         legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
+//         //Boolean - whether to make the chart responsive
+//         responsive: true,
+//         maintainAspectRatio: true,
+//         onClick: graphClickEvent
+//     };
+//
+//     barChartOptions.datasetFill = false;
+//     barChart.Bar(barChartData, barChartOptions);
 }
 
 function getRandomColor() {
@@ -36,105 +145,33 @@ function getColorSimilarityIndex(c1, c2) {
     return index;
 }
 
-function loadChart(){
-    /* ChartJS
-     * -------
-     * Here we will create a few charts using ChartJS
-     */
-
-    //--------------
-    //- AREA CHART -
-    //--------------
-
-    // Get context with jQuery - using jQuery's .get() method.
-    var areaChartCanvas = $("#areaChart").get(0).getContext("2d");
-    // This will get the first returned node in the jQuery collection.
-    var areaChart = new Chart(areaChartCanvas);
-
-    x = getRandomColor();
-    y = getRandomColor();
-    z = getRandomColor();
-
-    var areaChartData = {
-        labels: ["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [
-            {
-                label: "Digital Goods",
-                fillColor: x,
-                strokeColor: x,
-                pointColor: x,
-                pointStrokeColor: x,
-                pointHighlightFill: x,
-                pointHighlightStroke: x,
-                data: [50, 300, 40, 19, 86, 27, 90]
-            },
-            {
-                label: "xxx Goods",
-                fillColor: y,
-                strokeColor: y,
-                pointColor: y,
-                pointStrokeColor: y,
-                pointHighlightFill: y,
-                pointHighlightStroke: y,
-                data: [100, 9, 500, 10, 86, 27, 300]
+function ChartData(labels){
+    this.labels = labels;
+    this.datasets = [];
+    this.addChartDataSet = function (chartDataSet){
+        found = false;
+        loop:
+        for(i = 0; i < this.datasets.length; i++){
+            if(this.datasets[i].label == chartDataSet.label){
+                this.datasets[i].data.push(chartDataSet.data[0]);
+                found = true;
+                break loop;
             }
-            ,
-            {
-                label: "xxx dfasfdsa",
-                fillColor: z,
-                strokeColor: z,
-                pointColor: z,
-                pointStrokeColor: z,
-                pointHighlightFill: z,
-                pointHighlightStroke: z,
-                data: [150, 9, 60, 90, 70, 27, 300]
-            }
-        ]
-    };
+        }
 
-    var areaChartOptions = {
-        //Boolean - If we should show the scale at all
-        showScale: true,
-        //Boolean - Whether grid lines are shown across the chart
-        scaleShowGridLines: false,
-        //String - Colour of the grid lines
-        scaleGridLineColototOcorrenciaGrupoDataChartr: "rgba(0,0,0,.05)",
-        //Number - Width of the grid lines
-        scaleGridLineWidth: 1,
-        //Boolean - Whether to show horizontal lines (except X axis)
-        scaleShowHorizontalLines: true,
-        //Boolean - Whether to show vertical lines (except Y axis)
-        scaleShowVerticalLines: true,
-        //Boolean - Whether the line is curved between points
-        bezierCurve: true,
-        //Number - Tension of the bezier curve between points
-        bezierCurveTension: 0.3,
-        //Boolean - Whether to show a dot for each point
-        pointDot: false,
-        //Number - Radius of each point dot in pixels
-        pointDotRadius: 4,
-        //Number - Pixel width of point dot stroke
-        pointDotStrokeWidth: 1,
-        //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
-        pointHitDetectionRadius: 20,
-        //Boolean - Whether to show a stroke for datasets
-        datasetStroke: true,
-        //Number - Pixel width of dataset stroke
-        datasetStrokeWidth: 2,
-        //Boolean - Whether to fill the dataset with a color
-        datasetFill: true,
-        //String - A legend template
-        legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>",
-        //Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
-        maintainAspectRatio: true,
-        //Boolean - whether to make the chart responsive to window resizing
-        responsive: true
+        if(!found){
+            this.datasets.push(chartDataSet);
+        }
     };
-
-    //Create the line chart
-    areaChart.Line(areaChartData, areaChartOptions);
 }
 
-// $(document ).ready(function() {
-//    loadChart();
-// });
+function ChartDataSet() {
+    this.label = null;
+    this.data = [];
+}
+
+function graphClickEvent(event, array){
+    console.log("fajskdfjaskjfkasjfkas");
+    if(array[0]){
+    }
+}

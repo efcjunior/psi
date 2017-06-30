@@ -100,7 +100,9 @@
 <!-- iCheck 1.0.1 -->
 <script src="resources/adminLTE/plugins/iCheck/icheck.min.js"></script>
 <!-- ChartJS 1.0.1 -->
-<script src="resources/adminLTE/plugins/chartjs/Chart.min.js"></script>
+<!--<script src="resources/adminLTE/plugins/chartjs/Chart.min.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+
 <!-- FastClick -->
 <script src="resources/adminLTE/plugins/fastclick/fastclick.js"></script>
 <!-- AdminLTE App -->
@@ -122,6 +124,11 @@
             });
 
         });
+
+        $('#totOcorrenciaGrupoDataChart').load('view/totOcorrenciaGrupoDataChart.php', function () {
+            loadDashboard();
+        });
+
     });
 
 </script>

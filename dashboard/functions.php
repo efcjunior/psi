@@ -15,78 +15,22 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_SERVER["CONTENT_TYPE"] == "applicat
 
 }
 
-if($json['action'] == 'index') {
-    logMsg("Calling index...");
-    index();
+if($json['action'] == 'grupoMesAno') {
+    echo totalizaGrupoMesAno();
 }
 
-function index(){
-    logMsg("Calling index...");
-    $result = json_encode(find_all());
-    echo $result;
+if($json['action'] == 'labelData') {
+    echo consultaData($json['mesano']);
 }
 
-//if($_SERVER["REQUEST_METHOD"] == "POST" && $_SERVER["CONTENT_TYPE"] == "application/json"){
-//
-//    $data = file_get_contents("php://input", false, stream_context_get_default(), 0, $_SERVER["CONTENT_LENGTH"]);
-//    $_POST_JSON = json_decode($_REQUEST["JSON_RAW"],true);
-//
-//    if(is_array($_POST_JSON))
-//        $_REQUEST = $_POST_JSON+$_REQUEST;
-//
-//    $ourFileName = "testFile.txt";
-//    $ourFileHandle = fopen($ourFileName, 'w');
-//    fwrite($ourFileHandle, $_SERVER["REQUEST_METHOD"]."-".$_SERVER["CONTENT_TYPE"]."-".$_REQUEST['nome']);
-//    fclose($ourFileHandle);
-//
-//}else{
-//    $ourFileName = "testFile.txt";
-//    $ourFileHandle = fopen($ourFileName, 'w');
-//    fwrite($ourFileHandle, $_SERVER["REQUEST_METHOD"]);
-//    fclose($ourFileHandle);
-//}
+function consultaData($mesano){
+    $result = json_encode(queryData($mesano));
+    return $result;
+}
 
-
-
-//if($_SERVER["REQUEST_METHOD"] == "POST" && $_SERVER["CONTENT_TYPE"] == "application/json")
-//{
-//    echo "oddddddddddddddddddddddddddddddddddddddddddddddddddddddk";
-//
-//    $data = file_get_contents("php://input", false, stream_context_get_default(), 0, $_SERVER["CONTENT_LENGTH"]);
-//
-//
-//
-//
-//
-//    global $_POST_JSON;
-//    $_POST_JSON = json_decode($_REQUEST["JSON_RAW"],true);
-//
-//    // merge JSON-Content to $_REQUEST
-//    if(is_array($_POST_JSON)) $_REQUEST   = $_POST_JSON+$_REQUEST;
-//
-//}
-
-
-
-//echo "blllllllllllllllllllllllllllll";
-//
-//echo ini_get('allow_url_fopen');
-//
-//$json = file_get_contents("php://input");
-//$data = json_decode($json, true);
-
-//
-//
-//echo $_POST['data'];
-//
-//print_r($data);
-//$data = json_decode($data, true);
-//print_r($data);
-//
-//function test(){
-//    echo "hello world";
-//}
-//
-//echo "blllllllllllllllllllllllllllll";
+function totalizaGrupoMesAno(){
+    $result = json_encode(queryGrupoMesAno());
+    return $result;
+}
 
 ?>
