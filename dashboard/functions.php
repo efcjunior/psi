@@ -16,7 +16,26 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_SERVER["CONTENT_TYPE"] == "applicat
 }
 
 if($json['action'] == 'grupoMesAno') {
-    echo totalizaGrupoMesAno();
+    echo totalizaGrupoMesAno($json['startDate'],$json['endDate']);
+}
+
+if($json['action'] == 'exportToXls') {
+    echo exportaXls(null,null,null);
+}
+
+//deve ser periodo
+if($json['action'] == 'grupoMesAnoDia') {
+    echo totalizaGrupoMesAno($json['grupo'],$json['data']);
+}
+
+if($json['action'] == 'origemData') {
+    logMsg("totalizaOrigemData".$json['grupo'].$json['data']);
+    echo totalizaOrigemData($json['grupo'],$json['data']);
+}
+
+if($json['action'] == 'areaGrupo') {
+    logMsg("if totalizaAreaGrupo---start");
+    echo totalizaAreaGrupo($json['startDate'],$json['endDate']);
 }
 
 if($json['action'] == 'labelData') {
@@ -28,9 +47,30 @@ function consultaData($mesano){
     return $result;
 }
 
-function totalizaGrupoMesAno(){
-    $result = json_encode(queryGrupoMesAno());
+function totalizaGrupoMesAno($startDate,$endDate){
+    $result = json_encode(queryGrupoMesAno($startDate,$endDate));
     return $result;
+}
+
+//deve ser periodo
+function totalizaGrupoMesAnoDia($grupo, $data){
+    $result = json_encode(queryGrupoMesAnoDia($grupo, $data));
+    return $result;
+}
+
+function totalizaOrigemData($grupo, $data){
+    $result = json_encode(queryOrigemData($grupo, $data));
+    return $result;
+}
+
+function totalizaAreaGrupo($startDate,$endDate){
+    logMsg("function totalizaAreaGrupo---start");
+    $result = json_encode(queryAreaGrupo($startDate,$endDate));
+    return $result;
+}
+
+function exportaXls($grupo, $dt_ocorrencia, $sr){
+    $result = queryOcorrencias($grupo, $dt_ocorrencia, $sr);
 }
 
 ?>

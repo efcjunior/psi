@@ -59,11 +59,11 @@
                 <div id="totOcorrenciaGrupoDataChart" class="col-md-6">
 
                 </div>
-                <div class="col-md-6">
+                <div id="totOcorrenciaOrigemDataChart" class="col-md-6">
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-6">
+                <div id="totOcorrenciaAreaGrupoChart" class="col-md-12">
                 </div>
             </div>
         </section>
@@ -111,25 +111,39 @@
 <script src="resources/adminLTE/js/demo.js"></script>
 
 <!-- VIEWS-->
-<script src="view/totOcorrenciaGrupoDataChart.js"></script>
+<script src="view/controll.js"></script>
 
 <!-- Page script -->
 <script>
     $(function () {
         //Filtro periodo
-        $('#pesquisa').daterangepicker().on('apply.daterangepicker', function (ev, picker) {
-
-            $('#totOcorrenciaGrupoDataChart').load('view/totOcorrenciaGrupoDataChart.php', function () {
-                loadChart();
-            });
-
+        $('#pesquisa').daterangepicker({
+            locale: {
+                format: 'DD/MM/YYYY',
+            },
+            startDate: '01/01/2016'
+        }).on('apply.daterangepicker', function (ev, picker) {
+            console.log(picker);
+            loadDashboard(picker.startDate, picker.endDate);
         });
 
-        $('#totOcorrenciaGrupoDataChart').load('view/totOcorrenciaGrupoDataChart.php', function () {
-            loadDashboard();
-        });
+        $("#exportGrupoData").click(function () {
 
+            console.log("fasdfasdfa");
+        });
     });
+
+    loadDashboard('2016-01-01', '2016-12-31');
+
+    function loadDashboard(startDate, endDate) {
+        $('#totOcorrenciaGrupoDataChart').load('view/totOcorrenciaGrupoDataChart.php', function () {
+            loadGrupoDataChart(startDate, endDate);
+        });
+
+        $('#totOcorrenciaAreaGrupoChart').load('view/totOcorrenciaAreaGrupoChart.php', function () {
+            loadAreaGrupoChart(startDate, endDate);
+        });
+    }
 
 </script>
 
