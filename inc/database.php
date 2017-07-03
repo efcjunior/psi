@@ -5,7 +5,7 @@ function open_database() {
         $conn = pg_connect(DB_DSN);
 
         if (!$conn) {
-            logMsg("Not Connected");
+            echo "Not Connected";
         }
 
         return $conn;
@@ -22,60 +22,65 @@ function close_database($conn) {
     }
 }
 
-function queryOcorrencias($grupo, $dt_ocorrencia, $sr){
+function queryOcorrencias($startDate,$endDate,$noAgrupador,$valorAgrupador){
     $sql = "SELECT
                 *
-            FROM CTE WHERE 1=1";
+            FROM CTE WHERE 1=1 ";
 
-    if($grupo != null){
-        $sql = $sql." and grupo = '".$grupo."'";
+    if($noAgrupador != null){
+        switch ($noAgrupador){
+            case "grupo":
+                if($valorAgrupador != null){
+                    $sql = $sql." and grupo in ('".implode("','",$valorAgrupador)."') \n\n" ;
+                }
+                break;
+            case "sr":
+                if($valorAgrupador != null){
+                    $sql = $sql." and grupo in (".$valorAgrupador.")";
+                }
+                $sql = $sql." and sr in (".$valorAgrupador.")";
+                break;
+            case "dt_ocorrencia":
+                if($valorAgrupador != null){
+                    $sql = $sql." and sr in (".implode(",",$valorAgrupador).") \n\n" ;
+                }
+                $sql = $sql." and dt_ocorrencia = '".$valorAgrupador."'";
+                break;
+        }
     }
 
-    if($dt_ocorrencia != null){
-        $sql = $sql." and dt_ocorrencia = '".$dt_ocorrencia."'";
-    }
-
-    if($sr != null){
-        $sql = $sql." and sr in (".$sr.")";
-    }
-
-    return executaQuery($sql);
+    return executaQuery($sql,$startDate,$endDate);
 }
 
 
-function queryData($mesano){
+function queryCampoPorPeriodo($startDate,$endDate,$nomeCampo){
 
-    if($mesano){
         $sql = "
             SELECT
-                distinct anomes
-            FROM CTE
+                distinct ".$nomeCampo." 
+                
+             FROM CTE
              
-            ORDER BY 1
-        ";
-    }else{
-        $sql = "
-            SELECT
-                distinct dt_ocorrencia
-            FROM CTE
-             
-            ORDER BY 1
-        ";
-    }
+            ORDER BY 1";
 
 
-    return executaQuery($sql);
+    return executaQuery($sql,$startDate,$endDate);
 }
 
 
-function queryGrupoMesAno($startDate,$endDate){
+function queryGrupoMesAno($startDate,$endDate,$grupo){
     $sql = "SELECT
                 anomes, grupo, count(*)as total
-            FROM CTE
-             
-            GROUP BY 1,2
-             
-            ORDER BY 1,2";
+            FROM CTE WHERE 1=1 ";
+
+    if($grupo != null){
+        $sql = $sql." and grupo in ('".implode("','",$grupo)."') \n\n" ;
+    }
+
+    $sql = $sql."GROUP BY 1,2
+            
+                ORDER BY 1,2" ;
+
     return executaQuery($sql,$startDate,$endDate);
 }
 
@@ -96,8 +101,6 @@ function queryGrupoMesAnoDia($grupo,$data){
 
 function queryOrigemData($grupo,$data){
 
-    logMsg("GRUPO...".$grupo);
-
     $sql = "SELECT
 	          dt_ocorrencia, origem, count(*)as total
             FROM CTE
@@ -111,17 +114,21 @@ function queryOrigemData($grupo,$data){
     return executaQuery($sql);
 }
 
-function queryAreaGrupo($startDate,$endDate){
-    logMsg("function queryAreaGrupo---start");
+function queryAreaGrupo($startDate,$endDate, $sr){
     $sql = "  SELECT
                    sr,
                    grupo,
                    count(*)as total
-                FROM CTE
-                
-                GROUP BY 1,2
-                
-                ORDER BY 1,2";
+                FROM CTE WHERE 1 = 1 ";
+
+    if($sr != null){
+        $sql = $sql." and sr in (".implode(",",$sr).") \n\n" ;
+    }
+
+    $sql = $sql."GROUP BY 1,2
+            
+                ORDER BY 1,2" ;
+
     return executaQuery($sql,$startDate,$endDate);
 }
 
@@ -156,8 +163,6 @@ function executaQuery($paramSql,$startDate,$endDate){
                 }else {
                     $sql = $sql.")\n\n".$paramSql;
                 }
-
-    logMsg("SQL...".$sql);
 
 
     $result = pg_query($dbconn, $sql);

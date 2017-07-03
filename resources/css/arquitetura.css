@@ -2,20 +2,20 @@
 
 @media(min-width: 771px) {
 	.info-usuario {
-		padding-top: 0px !important; 
+		padding-top: 0px !important;
 		padding-bottom: 0px !important;
 	}
-	
+
 	.div-imagem-usuario {
-		display: inline-block; 
+		display: inline-block;
 		vertical-align: super;
 	}
-	
+
 	.div-info-usuario {
-		display: inline-block; 
+		display: inline-block;
 		line-height: 15px;
 	}
-} 
+}
 
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
 
@@ -110,7 +110,7 @@ div.box-header:hover {
 }
 
 pre {
-		
+
 }
 
 .invalid
@@ -172,7 +172,7 @@ pre {
 }
 
 .movimenta-periodo {
-	position: absolute; 
+	position: absolute;
 	top: 30%;
 }
 

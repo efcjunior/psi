@@ -3,12 +3,13 @@
 * */
 
 $.extend({
-    loadGrupoMesAno: function(startDate,endDate) {
+    loadGrupoMesAno: function(startDate,endDate,grupo) {
 
         var objData ={
             "action": "grupoMesAno",
             "startDate": startDate,
-            "endDate": endDate
+            "endDate": endDate,
+            "grupo":grupo
         };
 
         var resposta = null;
@@ -90,12 +91,13 @@ $.extend({
  * */
 
 $.extend({
-    loadAreaGrupo: function(startDate, endDate) {
+    loadAreaGrupo: function(startDate, endDate, sr) {
 
         var objData ={
             "action": "areaGrupo",
             "startDate": startDate,
-            "endDate": endDate
+            "endDate": endDate,
+            "sr": sr
         };
 
         var resposta = null;
@@ -113,17 +115,19 @@ $.extend({
         return resposta;
     }
 });
-
 
 /*
  * Export XLS
  * */
-
 $.extend({
-    exportToXls: function() {
+    exportToXls: function(startDate,endDate,noAgrupador,valorAgrupador) {
 
         var objData ={
-            "action": "exportToXls"
+            "action": "exportToXls",
+            "startDate": startDate,
+            "endDate": endDate,
+            "noAgrupador": noAgrupador,
+            "valorAgrupador": valorAgrupador
         };
 
         var resposta = null;
@@ -143,44 +147,154 @@ $.extend({
 });
 
 
-function loadLabels(data,isMesAno,isDate){
+$.extend({
+    loadLabelsBy: function(startDate,endDate,nomeCampo) {
+
+        var objData ={
+            "action": "labelByCampo",
+            "startDate": startDate,
+            "endDate": endDate,
+            "nomeCampo": nomeCampo
+        };
+
+        var resposta = null;
+
+        $.ajax({
+            url: "dashboard/functions.php",
+            method: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(objData),
+            async: false,
+            success: function (response) {
+                console.log(nomeCampo);
+                resposta = loadLabels(response,nomeCampo);
+            }
+        });
+        return resposta;
+    }
+});
+
+function loadLabels(data,nomeCampo){
     var labels = [];
 
     jQuery.each(data, function( key, value ) {
-        if(isDate){
-            if(isMesAno){
-                labels.push(value.anomes);
-            }else{
-                labels.push(value.dt_ocorrencia);
-            }
-        }else{
-            console.log(value);
-            labels.push(value.sr);
-        }
+        console.log(nomeCampo);
+        labels.push(value[nomeCampo]);
 
     });
 
     return Array.from(new Set(labels));
 }
 
-function loadGrupoDataChart(startDate, endDate){
-    data = $.loadGrupoMesAno(startDate,endDate);
+function loadGrupoDataChart(startDate, endDate, grupo){
+    data = $.loadGrupoMesAno(startDate,endDate,grupo);
 
-    labels = loadLabels(data,true,true);
+    labels = loadLabels(data,'anomes');
 
     chartData = getChartDataTotalizadorBy(data,'grupo',labels);
 
-    loadChart(chartData,'bar',"barChartGrupoData");
+    var options ={
+        onClick: loadOrigemDataChart
+    };
+
+    loadChart(chartData,'bar',"barChartGrupoData",options);
 }
 
-function loadAreaGrupoChart(startDate, endDate){
-    data = $.loadAreaGrupo(startDate, endDate);
+function loadAreaGrupoChart(startDate, endDate, sr){
+    console.log(startDate);
 
-    labels = loadLabels(data,false,false);
+    data = $.loadAreaGrupo(startDate, endDate, sr);
+
+    labels = loadLabels(data,'sr');
 
     chartData = getChartDataTotalizadorBy(data,'grupo',labels);
 
     loadChart(chartData,'bar',"barChartAreaGrupo");
+
+}
+
+function loadSelect(startDate, endDate, idSelect, label){
+
+    var options = $.loadLabelsBy(startDate,endDate,label);
+
+    $(idSelect).find('option').remove();
+
+    $.each(options, function(key, value) {
+        $('<option>').val(value).text(value).appendTo(idSelect);
+    });
+
+    $(idSelect).select2();
+
+    $(idSelect).change(function(e) {
+        var startDate = getStartDatePesquisa();
+        var dateEnd = getEndDatePesquisa();
+        var valorLabel = $(e.target).val();
+
+        switch (label){
+            case "sr":
+                loadAreaGrupoChart(startDate,dateEnd,valorLabel);
+                break;
+            case "grupo":
+                loadGrupoDataChart(startDate,endDate,valorLabel);
+                break;
+        }
+    });
+}
+
+function exportXls(noAgrupador,idChartSelect) {
+    // var startDate = getStartDatePesquisa();
+    // var endDate = getEndDatePesquisa();
+    // var valorAgrupador = $(idChartSelect).val();
+    // console.log(startDate);
+    // console.log(endDate);
+    // console.log(noAgrupador);
+    // console.log(idChartSelect);
+    // console.log(valorAgrupador);
+    //
+    // var objData ={
+    //     "action": "exportToXls",
+    //     "startDate": startDate,
+    //     "endDate": endDate,
+    //     "noAgrupador": noAgrupador,
+    //     "valorAgrupador": valorAgrupador
+    // };
+    //
+    // $.ajax({
+    //     url: "dashboard/functions.php",
+    //     method: 'post',
+    //     contentType: 'application/json',
+    //     data: JSON.stringify(objData),
+    //     async:false,
+    //     success: function (response) {
+    //
+    //
+
+
+    //
+    //         // var blob=new Blob([response]);
+    //         // var link=document.createElement('a');
+    //         // link.href=window.URL.createObjectURL(blob);
+    //         // link.download="example.xml";
+    //         // link.click();
+    //         // window.location = 'dashboard/functions.php?filename=example.xml';
+    //     }
+    // });
+
+
+    // $.exportToXls(startDate,endDate,noAgrupador,valorAgrupador);
+
+}
+
+function getStartDatePesquisa(){
+    return getPeriodoPesquisa().split('-')[0].trim();
+}
+
+function getEndDatePesquisa(){
+    return getPeriodoPesquisa().split('-')[1].trim();
+}
+
+function getPeriodoPesquisa(){
+    return $('#pesquisa').val();
 }
 
 function getChartDataTotalizadorBy(data,label,labels){
@@ -198,12 +312,11 @@ function getChartDataTotalizadorBy(data,label,labels){
 
 }
 
-
 function loadOrigemDataChart(event, array){
     $('#totOcorrenciaOrigemDataChart').load('view/totOcorrenciaOrigemDataChart.php', function () {
         data = $.loadOrigemData(array[0]._model.datasetLabel,array[0]._model.label);
         console.log(event);
-        labels = loadLabels(data,false,true);
+        labels = loadLabels(data,'dt_ocorrencia');
 
         chartData = getChartDataTotalizadorBy(data,'origem',labels);
 
@@ -211,8 +324,7 @@ function loadOrigemDataChart(event, array){
     });
 }
 
-
-function loadChart(chartData, typeBar, selectorId){
+function loadChart(chartData, typeBar, selectorId, options){
 
     var canvas =  document.getElementById(selectorId);
     var ctx = canvas.getContext("2d");
@@ -220,10 +332,10 @@ function loadChart(chartData, typeBar, selectorId){
     var chart = new Chart(ctx, {
         type: typeBar,
         data:chartData,
-        options:{
-            onClick: loadOrigemDataChart
-        }
+        options:options
     });
+
+    console.log(chart);
 }
 
 function ChartData(labels){
@@ -250,4 +362,3 @@ function ChartDataSet() {
     this.label = null;
     this.data = [];
 }
-

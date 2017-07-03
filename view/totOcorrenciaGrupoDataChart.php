@@ -7,6 +7,12 @@
         </div>
     </div>
     <div class="box-body">
+        <div class="form-group">
+            <label>Grupo</label>
+            <select id="selectGrupo" class="form-control select2" multiple="multiple" data-placeholder="Selecione Grupo's" style="width: 30%;">
+                <option></option>
+            </select>
+        </div>
         <div class="chart">
             <canvas id="barChartGrupoData" style="height:230px"></canvas>
         </div>

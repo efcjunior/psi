@@ -11,7 +11,7 @@
 <!-- Header Navbar -->
 <nav class="navbar navbar-static-top" role="navigation" >
     <!-- Navbar Right Menu -->
-    <div class="form-group campo-pesquisa-div hidden-sm hidden-xs dropdown" >
+    <div class="form-group campo-pesquisa-div col-sm-3 col-md-3 pull-left hidden-sm hidden-xs dropdown" >
         <div class="input-group">
             <div class="input-group-addon">
                 <i class="fa fa-calendar"></i>
